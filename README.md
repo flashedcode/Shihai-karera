@@ -1,175 +1,174 @@
 
+
 ---
 
-# *Shihai Karera (Formerly Known as Gyakuten) README Guide*
+# Shihai Karera ⌐■_■ (formerly known as Gyakuten)
+                 #Official Readme
+**Shihai Karera** is an advanced AI-powered WiFi penetration testing and monitoring system built upon Pwnagotchi. With custom enhancements for improved performance, automated processes, and a sleek boot sequence, Shihai Karera is designed to be efficient, fast, and adaptable to different devices.
 
-Welcome to the setup guide for **Shihai Karera**, previously known as Gyakuten. This customized Pwnagotchi system features a web control interface, personalized branding, and automated hacking functionalities. Follow these instructions to configure your system effectively.
+## Key Features
 
-## **1. Flash the Pwnagotchi Image**
+- **Minimalistic Boot Sequence**: Enjoy a clean, professional startup featuring ASCII art `⌐■_■ Shihai Karera` followed by a Windows 11-like loading screen.
+- **AI Integration**: The system optimizes itself for the hardware it’s running on, using AI to fine-tune performance.
+- **Automated Processes**: Automated WPA handshake capture, CPU and GPU-accelerated cracking with Hashcat, and device monitoring with tools like Flipper Zero Fiber AI.
+- **Real-time Updates**: Automated updates of drivers and software to ensure compatibility and performance improvements.
+- **Lightweight & Efficient**: Optimized for low-power devices like Raspberry Pi, with resource-efficient operations.
 
-1. **Download the Pwnagotchi Image**:
-   - Visit the [Pwnagotchi Releases page](https://github.com/evilsocket/pwnagotchi/releases) and download the image compatible with your Raspberry Pi model.
+---
+
+## Getting Started
+
+### 1. Download & Flash the Image
+
+1. **Download the Shihai Karera Image**:
+   - Download the latest pre-configured image from the [official releases](https://github.com/jayofelony/pwnagotchi/releases/download/v2.8.9/pwnagotchi-2.8.9-32bit.img.xz).
 
 2. **Flash the Image**:
-   - Use **Etcher** or **Raspberry Pi Imager** to write the Pwnagotchi image to an SD card.
+   - Use **balenaEtcher** (or your preferred flashing tool) to flash the image to your SD card.
+   - Insert the SD card into your Raspberry Pi or compatible device.
 
-## **2. Modify Initial Configuration**
+### 2. First Boot
 
-1. **Insert the SD Card**:
-   - After flashing, insert the SD card into your computer and open the **`config.toml`** file in the `boot` partition.
-
-2. **Customize `config.toml`**:
-   - Modify the **`config.toml`** file to set Wi-Fi, IP addresses, and startup scripts. Here’s a sample configuration:
-   ```toml
-   main.name = "Shihai_Karera"
-   main.lang = "en"
-
-   network.interfaces.wlan0.ip = "10.0.0.1"
-   network.interfaces.wlan0.netmask = "255.255.255.0"
-   network.interfaces.wlan0.gateway = "10.0.0.1"
-   network.interfaces.wlan0.dns = "10.0.0.1"
-
-   network.interfaces.eth0.ip = "10.0.0.2"
-   network.interfaces.eth0.netmask = "255.255.255.0"
-   network.interfaces.eth0.gateway = "10.0.0.2"
-   network.interfaces.eth0.dns = "10.0.0.2"
-
-   main.ai.enabled = true
-   main.ai.model = "ollama"
-   main.ai.brain = "shihai_karera"
-
-   scripts.startup = "/usr/local/bin/shihai_karera.py"
-
-   ui.display.enabled = true
-   ui.display.type = "waveshare_v2"
-
-   bluetooth.enabled = true
-   bluetooth.device = "hci0"
+1. **Power On**: Upon powering on, the system will display the minimal ASCII art: 
    ```
+   ⌐■_■ Shihai Karera
+   ```
+   followed by a Windows 11-style loading screen.
 
-3. **Enable SSH**:
-   - To enable SSH access, create an empty file named `ssh` (without any extension) in the **boot** partition.
+2. **System Initialization**: Shihai Karera will automatically initialize Pwnagotchi, update itself, and start necessary services.
 
-## **3. Set Up the Web Control Interface**
+### 3. System Configuration
 
-1. **SSH into Your Device**:
-   - Power on your Raspberry Pi and connect it to your network. Access it via SSH:
+1. **Configuration File**: Shihai Karera is pre-configured, but you can customize it further by editing the `/etc/pwnagotchi/config.toml` file.
+   - **Default Configuration**:
+     ```ini
+     main.name = "Shihai_Karera"
+     main.lang = "en"
+
+     [network.interfaces.wlan0]
+     ip = "10.0.0.1"
+     netmask = "255.255.255.0"
+     gateway = "10.0.0.1"
+     dns = "10.0.0.1"
+
+     # AI Configuration
+     main.ai.enabled = true
+     main.ai.model = "ollama"
+     main.ai.brain = "shihai_karera"
+
+     # Device Health Management AI
+     main.ai.device_health.enabled = true
+     main.ai.device_health.model = "device_health_ai"
+     main.ai.device_health.data_path = "/home/pi/device_health_data.json"
+
+     # Hashcat Configuration for WPA2 Cracking
+     hashcat.enabled = true
+     hashcat.cpu = true                  # Enable CPU cracking
+     hashcat.gpu = true                  # Enable GPU cracking
+     hashcat.cpu_wordlist = "/home/pi/wordlists/top24million.txt"
+     hashcat.gpu_wordlist = "/home/pi/wordlists/top24million.txt"
+     hashcat.data_path = "/home/pi/handshakes"
+
+     # Startup Script
+     scripts.startup = "/usr/local/bin/shihai_karera.py"
+
+     # Handshake Saving Location
+     handshake.directory = "/home/pi/handshakes"
+     ```
+
+### 4. Key Commands
+
+1. **Start Pwnagotchi**: The system auto-starts Pwnagotchi, but you can also run it manually with:
    ```bash
-   ssh pi@<your_device_ip>
+   sudo systemctl start pwnagotchi
    ```
 
-2. **Install Dependencies**:
-   - Update your system and install essential packages, including `curl`, `wget`, and `ollama`, along with Python dependencies:
+2. **Capture WPA Handshake**:
    ```bash
-   sudo apt update
-   sudo apt upgrade -y
-   sudo apt install curl wget python3-pip python3-flask -y
-   sudo pip3 install ollama
+   sudo pwnagotchi --start
    ```
 
-3. **Create the Control Script**:
-   - Save the following Python script as `/etc/pwnagotchi/pwnagotchi_control.py`:
-   ```python
-   from flask import Flask, request, jsonify
-
-   app = Flask(__name__)
-
-   @app.route('/api/control', methods=['POST'])
-   def control():
-       data = request.json
-       action = data.get('action')
-
-       if action == 'start':
-           return jsonify({"status": "Attacks started"}), 200
-       elif action == 'stop':
-           return jsonify({"status": "Attacks stopped"}), 200
-       else:
-           return jsonify({"status": "Invalid action"}), 400
-
-   if __name__ == "__main__":
-       app.run(host='0.0.0.0', port=5000)
-   ```
-
-4. **Create a Systemd Service**:
-   - Configure the web control interface to start automatically on boot:
+3. **Update the System**:
    ```bash
-   sudo nano /etc/systemd/system/shihai-karera-web.service
+   sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get dist-upgrade -y
    ```
 
-   Add the following content:
-   ```ini
-   [Unit]
-   Description=Shihai Karera Web Control Interface
-   After=network.target
+4. **Monitor Device Performance**:
+   - Utilize the Flipper Zero integration and other monitoring tools to keep track of the device's health and performance.
 
-   [Service]
-   User=root
-   WorkingDirectory=/etc/pwnagotchi
-   ExecStart=/usr/bin/python3 /etc/pwnagotchi/pwnagotchi_control.py
-   Restart=on-failure
+### 5. Automating Startup Tasks
 
-   [Install]
-   WantedBy=multi-user.target
-   ```
+Shihai Karera automates key tasks during startup via a custom script. You can modify this script (`/path/to/startup.sh`) if you need to add additional startup routines.
 
-   Enable and start the service:
+1. **Default Startup Script**:
    ```bash
-   sudo systemctl daemon-reload
-   sudo systemctl enable shihai-karera-web.service
-   sudo systemctl start shihai-karera-web.service
+   #!/bin/bash
+   clear
+   echo "⌐■_■ Shihai Karera"
+   sleep 3
+   plymouth --show-splash
+   sleep 5
+
+   pwnagotchi &
+   sudo apt-get update -y && sudo apt-get upgrade -y && sudo apt-get dist-upgrade -y
+   python3 /usr/local/bin/shihai_monitoring.py &
+   sudo systemctl start wpa_supplicant.service
    ```
 
-## **4. Customize Startup Branding and Commands**
-
-1. **Edit Startup Banner**:
-   - Add a custom banner to the startup sequence by editing `/etc/rc.local`:
-   ```bash
-   sudo nano /etc/rc.local
-   ```
-
-   Insert the following lines before `exit 0`:
-   ```bash
-   echo "******************************************"
-   echo "                Shihai Karera              "
-   echo "******************************************"
-   echo "Starting up..."
-   ```
-
-2. **Auto-Run Commands at Startup**:
-   - Ensure that scripts and the web control interface run automatically by appending the necessary commands to **`/etc/rc.local`**:
-   ```bash
-   /usr/bin/python3 /etc/pwnagotchi/pwnagotchi_control.py &
-   ```
-
-## **5. Access and Control Shihai Karera**
-
-1. **Access the Web Interface**:
-   - Open a web browser and navigate to `http://<your_device_ip>:5000` to use the web control interface.
-
-2. **Manage Hacking Activities**:
-   - Control attacks by sending `POST` requests to `/api/control` with actions like "start" or "stop" via a REST client or the web interface.
-
-## **Troubleshooting**
-
-- **Service Not Starting**: Check the status of `shihai-karera-web.service`:
-  ```bash
-  sudo systemctl status shihai-karera-web.service
-  ```
-
-- **Web Interface Unreachable**: Ensure network connectivity and verify that port 5000 is not blocked by a firewall.
-
-- **Script Errors**: Look at logs in `/var/log/syslog` or review the service status output for any errors.
-
-## **Conclusion**
-
-Your **Shihai Karera** Pwnagotchi system, formerly known as Gyakuten, is now configured with:
-- Static IP addresses for easy network access.
-- A custom Python-based web control interface.
-- Automatic startup of scripts and branding.
-- Integration of essential utilities like `curl`, `wget`, and `ollama`.
-
-Enjoy the advanced capabilities of your customized Pwnagotchi system. For additional support or modifications, feel free to ask!
+2. **Automate on Boot**:
+   The script is automatically run on boot via `rc.local`. If you need to customize it further, you can find it in `/etc/rc.local`.
 
 ---
 
-Let me know if there’s anything else you’d like to tweak or if you need more help, na!
+## Advanced Features
+
+### 1. AI-Driven Optimizations
+- **Hardware-Specific Tuning**: On first boot, Shihai Karera analyzes the hardware it's running on and adjusts settings for optimal performance.
+- **Auto-Updates**: Regular updates to drivers and system files ensure that Shihai Karera stays current with the latest optimizations.
+
+### 2. GPU and CPU-Accelerated Cracking
+- **Hashcat Integration**: For high-speed WPA password cracking, Shihai Karera utilizes both CPU and GPU power. The system is configured to use Hashcat with pre-installed wordlists for efficient brute force operations.
+
+### 3. Real-Time Monitoring
+- **Flipper Zero Integration**: Shihai Karera includes tools for monitoring device performance and network activity in real-time. Automated reports and alerts can be enabled via configuration.
+
+### 4. Custom Boot Sequence
+- **Minimalist Boot Screen**: Displayed on startup, followed by a clean Windows 11-like loading animation.
+- **Plymouth Themes**: Easily change or update the boot theme by customizing `plymouth` settings.
+
+---
+
+## Troubleshooting
+
+1. **Logs**: All logs related to Shihai Karera are stored in `/var/log/shihai_karera.log`. This is the first place to check for issues.
+2. **Manual Updates**: While the system auto-updates, you can manually trigger updates using:
+   ```bash
+   sudo apt-get update && sudo apt-get upgrade
+   ```
+3. **Reset Configuration**: If something goes wrong with the configuration, you can reset the config file by re-flashing the image or restoring a backup of `/etc/pwnagotchi/config.toml`.
+
+---
+
+## Contributing
+
+Shihai Karera is open-source and welcomes contributions. If you have a feature request, bug report, or improvement suggestion, feel free to open an issue or submit a pull request on the [GitHub repository](https://github.com/jayofelony/pwnagotchi).
+
+---
+
+## Credits
+
+- **Pwnagotchi**: The original base for Shihai Karera.
+- **Jayofelony**: For the 2.8.9 release that powers this system.
+- **Ollama AI**: For the AI-powered optimizations that improve attack performance.
+- **Flipper Zero Fiber AI**: For advanced device monitoring and system health tools.
+- **Open-Source Community**: For ongoing contributions and support in the development of this tool.
+
+---
+
+## License
+
+Shihai Karera is released under the [MIT License](LICENSE). Feel free to use, modify, and distribute the software in accordance with the license terms.
+
+---
+
+This README provides comprehensive guidance on setting up, configuring, and using **Shihai Karera**, ensuring a smooth experience from installation to advanced operations.
