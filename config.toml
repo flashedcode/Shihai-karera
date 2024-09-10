@@ -1,0 +1,30 @@
+main.name = "Shihai_Karera"
+main.lang = "en"
+
+[network.interfaces.wlan0]
+ip = "10.0.0.1"
+netmask = "255.255.255.0"
+gateway = "10.0.0.1"
+dns = "10.0.0.1"
+
+# AI Configuration
+main.ai.enabled = true
+main.ai.model = "ollama"
+main.ai.brain = "shihai_karera"
+
+# Device Health Management AI
+main.ai.device_health.enabled = true
+main.ai.device_health.model = "device_health_ai"
+main.ai.device_health.data_path = "/home/pi/device_health_data.json"
+
+# Hashcat Configuration for WPA2 Cracking
+hashcat.enabled = true
+hashcat.mode = "GPU"  # Use GPU for faster cracking
+hashcat.wordlist = "/home/pi/wordlists/top24million.txt"
+hashcat.data_path = "/home/pi/handshakes"
+
+# Startup Script
+scripts.startup = "/usr/local/bin/shihai_karera.py"
+
+# Handshake Saving Location
+handshake.directory = "/home/pi/handshakes"
